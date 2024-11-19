@@ -1,12 +1,4 @@
-const rowsData = [
-    { pn: "SDSSDA-2T00-G26", quantity: 45, description: "SANDISK SSD 2T" },
-    { pn: "SDSSDA-1T00-G26", quantity: 27, description: "SANDISK SSD 1T" },
-    { pn: "CT240BX200SSD1", quantity: 31, description: "CRUCIAL SSD 240G" },
-    { pn: "CT2000MX500SSD1", quantity: 16, description: "CRUCIAL SSD 2T" },
-    { pn: "SSDDSC2KW010T8", quantity: 46, description: "INTEL SSD 1T" },
-  ];
-
-  const TableRow = ({ pn, quantity, description }) => (
+const TableRow = ({ pn, quantity, description }) => (
     <tr className="hover:bg-gray-100 dark:hover:bg-neutral-700">
       <td className="px-6 py-4 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
         {pn}
@@ -35,7 +27,7 @@ const rowsData = [
   );
 
 
-export default function InventoryList() {
+export default function InventoryList({data}) {
   return (
     <div className="flex flex-col bg-white rounded-md border border-gray-200">
       <div className="-m-1.5 overflow-x-auto">
@@ -71,7 +63,7 @@ export default function InventoryList() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                {rowsData.map((row) => (
+                {data.map((row) => (
                   <TableRow key={row.name} {...row} />
                 ))}
               </tbody>
