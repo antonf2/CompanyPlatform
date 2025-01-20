@@ -5,3 +5,8 @@ export const rowsData = [
     { pn: "CT2000MX500SSD1", quantity: 16, description: "CRUCIAL SSD 2T" },
     { pn: "SSDDSC2KW010T8", quantity: 46, description: "INTEL SSD 1T" },
   ];
+
+export const userData = [
+  { username: "antonf", password: "1234", role: "admin", title: "Integrator"},
+  { username: "bens", password: "1234", role: "user", title: "Integrator"},
+]

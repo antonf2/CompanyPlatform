@@ -9,7 +9,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import classNames from "classnames";
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import {
   HiOutlineBell,
   HiOutlineChatAlt,
@@ -17,9 +17,11 @@ import {
 } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import SidebarMenu from "../HeaderComponents/SidebarMenu";
+import { AuthContext } from "../../Consts/common";
 
 export default function Header() {
   const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated, user } = useContext(AuthContext);
 
   return (
     <header className="bg-white h-16 px-4 flex justify-between items-center border-b border-gray-200 w-screen fixed z-1">
@@ -37,13 +39,13 @@ export default function Header() {
           className="text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-sm px-4 pl-11"
         />
       </div>
-      <div className="flex items-center gap-2 mr-2 ">
+      <div className="flex items-center gap-2 mr-2">
         <PopoverItem
           icon={HiOutlineChatAlt}
           panelContent={
             <>
               <strong className="text-gray-700 font-medium">Messages</strong>
-              <div className="mt-2 py-1 text-sm">This is Messages panel</div>
+              <div className="mt-2 py-1 text-sm">Under Development</div>
             </>
           }
         />
@@ -54,9 +56,7 @@ export default function Header() {
               <strong className="text-gray-700 font-medium">
                 Notifications
               </strong>
-              <div className="mt-2 py-1 text-sm">
-                This is Notifications panel
-              </div>
+              <div className="mt-2 py-1 text-sm">Under Development</div>
             </>
           }
         />
@@ -91,7 +91,11 @@ export default function Header() {
               <MenuItem>
                 <div
                   className="group flex items-center px-4 py-2 text-sm cursor-pointer rounded-md data-[focus]:bg-gray-100 data-[hover]:bg-gray-100"
-                  onClick={() => navigate("/login")}
+                  onClick={() => {
+                    localStorage.removeItem("authToken");
+                    setIsAuthenticated(false);
+                    navigate("/login");
+                  }}
                 >
                   Logout
                 </div>
@@ -99,6 +103,12 @@ export default function Header() {
             </MenuItems>
           </Transition>
         </Menu>
+        {user && (
+          <div className="text-md font-medium text-gray-900">
+            <div>{user.username}</div>
+            <div className="text-sm text-gray-500">{user.title}</div>
+          </div>
+        )}
       </div>
     </header>
   );

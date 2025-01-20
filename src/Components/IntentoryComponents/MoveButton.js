@@ -1,4 +1,4 @@
-export default function AddBtn({ setIsOpen, data }) {
+export default function MoveBtn({ setIsOpen, data }) {
     const handleFormSubmit = (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -6,6 +6,7 @@ export default function AddBtn({ setIsOpen, data }) {
         pn: formData.get("partNumber"),
         quantity: formData.get("quantity"),
         location: formData.get("location"),
+        toLocation: formData.get("toLocation"),
       };
       data.push(inventoryItem); //replace with actual use for inventoryItem
       setIsOpen(false);
@@ -53,12 +54,27 @@ export default function AddBtn({ setIsOpen, data }) {
                 htmlFor="location"
                 className="block text-sm font-medium text-gray-700"
               >
-                Location
+                From Location
               </label>
               <input
                 type="text"
                 name="location"
                 id="location"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="toLocation"
+                className="block text-sm font-medium text-gray-700"
+              >
+                To Location
+              </label>
+              <input
+                type="text"
+                name="toLocation"
+                id="toLocation"
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />

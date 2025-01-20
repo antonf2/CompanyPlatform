@@ -3,7 +3,7 @@ import { HiMenu } from "react-icons/hi";
 import CreateBtn from "./CreateButton";
 
 
-export default function InventoryButton({color,text,data}) {
+export default function InventoryButton({color,text,data,action:Action}) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -18,7 +18,7 @@ export default function InventoryButton({color,text,data}) {
         {text}
       </div>
     </button>
-    {isOpen && <CreateBtn setIsOpen={setIsOpen} data={data}/>}
+    {isOpen && <Action setIsOpen={setIsOpen} data={data}/>}
     </>
   );
 }
