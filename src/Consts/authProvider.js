@@ -4,6 +4,7 @@ import { AuthContext } from './common';
 function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const syncUserFromStorage = () => {
     const storedUser = localStorage.getItem('authToken');
@@ -17,26 +18,35 @@ function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    syncUserFromStorage();
+    const storedUser = localStorage.getItem("authToken");
+    if (storedUser) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(storedUser));
+    }
+
+    setIsLoading(false);
 
     const handleStorageChange = () => {
-      syncUserFromStorage();
+      const updatedToken = localStorage.getItem("authToken");
+      if (!updatedToken) {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   const login = (userData) => {
     localStorage.setItem('authToken', JSON.stringify(userData));
-    syncUserFromStorage();
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
     syncUserFromStorage();
   };
 
@@ -48,7 +58,6 @@ function AuthProvider({ children }) {
         user,
         setUser,
         login,
-        logout,
       }}
     >
       {children}

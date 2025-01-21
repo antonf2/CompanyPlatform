@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Layout from './Components/Shared/Layout';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Dashboard from './Pages/Dashboard';
 import Management from './Pages/Management';
 import Wiki from './Pages/Wiki';
@@ -10,12 +10,11 @@ import { AuthContext } from './Consts/common';
 import AuthProvider from './Consts/authProvider';
 
 function PrivateRoute({ children, requiredRole }) {
-  const { isAuthenticated, user } = React.useContext(AuthContext);
-
-  console.log("Checking access:", { isAuthenticated, user, requiredRole });
+  const { isAuthenticated, user } = useContext(AuthContext);
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{ from: location }} />;
   }
 
   if (requiredRole && user?.role !== requiredRole) {

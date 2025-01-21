@@ -50,12 +50,12 @@ export default function Management() {
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto">
-      <div className="container px-6 py-8 mx-auto">
+      <div className="container py-3 mx-auto">
         <h3 className="text-3xl font-medium text-gray-700">User Management</h3>
 
         <button
           onClick={handleCreateClick}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md mb-3 mt-3"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md mb-3 mt-3 hover:bg-blue-600"
         >
           Create New User
         </button>
@@ -66,32 +66,32 @@ export default function Management() {
               <table className="min-w-full">
                 <thead>
                   <tr>
-                    <th className="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                    <th className="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                    <th className="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                    <th className="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                       Role
                     </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
+                    <th className="px-4 py-3 border-b border-gray-200 bg-gray-50"></th>
                   </tr>
                 </thead>
 
                 <tbody className="bg-white">
                   {users.map((user, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                      <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200">
                         {user.username}
                       </td>
-                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                      <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200">
                         {user.title}
                       </td>
-                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                      <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200">
                         {user.role}
                       </td>
-                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-right">
+                      <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200 text-right">
                         <button
                           onClick={() => handleEditClick(user)}
                           className="text-indigo-600 hover:text-indigo-900 mr-4"

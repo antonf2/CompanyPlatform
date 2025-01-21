@@ -1,4 +1,4 @@
-import {HiOutlineViewGrid, HiCog, HiLogout, HiBookOpen, HiClipboardList} from 'react-icons/hi'
+import {HiOutlineViewGrid, HiCog, HiBookOpen, HiClipboardList} from 'react-icons/hi'
 
 export const SIDEBAR_LINKS = [
     {
@@ -26,19 +26,3 @@ export const SIDEBAR_LINKS = [
         icon: <HiCog />,
     },
 ]
-
-export const SIDEBAR_BOTTOM_LINKS = [
-    {
-        key: 'logout',
-        label: 'Logout',
-        path: '/login',
-        icon: <HiLogout />,
-    }
-]
-
-// {
-//     key: '',
-//     label: '',
-//     path: '',
-//     icon: ,
-// }
