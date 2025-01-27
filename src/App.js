@@ -1,35 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
-import Layout from './Components/Shared/Layout';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import Dashboard from './Pages/Dashboard';
-import Management from './Pages/Management';
-import Wiki from './Pages/Wiki';
-import Inventory from './Pages/Inventory';
-import Login from './Pages/Login';
-import { AuthContext } from './Consts/common';
-import AuthProvider from './Consts/authProvider';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./Components/Shared/Layout";
+import Dashboard from "./Pages/Dashboard";
+import Management from "./Pages/Management";
+import Wiki from "./Pages/Wiki";
+import Inventory from "./Pages/Inventory";
+import Login from "./Pages/Login";
+import AuthProvider from "./Consts/authProvider";
+import { AuthContext } from "./Consts/common";
 
 function PrivateRoute({ children, requiredRole }) {
-  const { isAuthenticated, user } = useContext(AuthContext);
-  const location = useLocation();
+  const { isAuthenticated, user } = React.useContext(AuthContext);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} />;
+    return <Navigate to="/login" />;
   }
 
   if (requiredRole && user?.role !== requiredRole) {
     return <Navigate to="/" />;
   }
 
-  return children;
-}
-
-
-function AuthWrapper({ children }) {
-  const { isAuthenticated } = React.useContext(AuthContext);
-  if (isAuthenticated) {
-    return <Navigate to="/" />;
-  }
   return children;
 }
 
@@ -50,7 +40,7 @@ function App() {
             <Route
               path="management"
               element={
-                <PrivateRoute requiredRole="admin">
+                <PrivateRoute requiredRole="Admin">
                   <Management />
                 </PrivateRoute>
               }
@@ -72,14 +62,7 @@ function App() {
               }
             />
           </Route>
-          <Route
-            path="login"
-            element={
-              <AuthWrapper>
-                <Login />
-              </AuthWrapper>
-            }
-          />
+          <Route path="login" element={<Login />} />
         </Routes>
       </Router>
     </AuthProvider>

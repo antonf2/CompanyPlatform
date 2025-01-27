@@ -1,52 +1,29 @@
-import React, { useState } from "react";
-import { userData as initialUserData } from "../Components/IntentoryComponents/DatabaseDemo";
+import React from "react";
+import useManagementLogic from "../Services/useManagementLogic";
 
 export default function Management() {
-  const [users, setUsers] = useState(initialUserData);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const {
+    users,
+    loading,
+    error,
+    currentUser,
+    isPopupOpen,
+    isEditing,
+    handleEditClick,
+    handleCreateClick,
+    handleClosePopup,
+    handleSave,
+    handleDeleteClick,
+    handleInputChange,
+  } = useManagementLogic();
 
-  const handleEditClick = (user) => {
-    setCurrentUser(user);
-    setIsEditing(true);
-    setIsPopupOpen(true);
-  };
+  if (loading) {
+    return <div>Loading users...</div>;
+  }
 
-  const handleCreateClick = () => {
-    setCurrentUser({ username: "", password: "", role: "user", title: "" });
-    setIsEditing(false);
-    setIsPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-    setCurrentUser(null);
-  };
-
-  const handleSave = () => {
-    if (isEditing) {
-      setUsers((prev) =>
-        prev.map((user) =>
-          user.username === currentUser.username ? currentUser : user
-        )
-      );
-    } else {
-      setUsers((prev) => [...prev, currentUser]);
-    }
-    handleClosePopup();
-  };
-
-  const handleDeleteClick = (username) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers((prev) => prev.filter((user) => user.username !== username));
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentUser((prev) => ({ ...prev, [name]: value }));
-  };
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto">
@@ -152,6 +129,30 @@ export default function Management() {
               />
             </div>
             <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={currentUser.email}
+                onChange={handleInputChange}
+                className="w-full border px-3 py-2 rounded-md"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Active</label>
+              <select
+                name="isActive"
+                value={currentUser.isActive}
+                onChange={handleInputChange}
+                className="w-full border px-3 py-2 rounded-md"
+              >
+                <option value={true}>Active</option>
+                <option value={false}>Inactive</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Role</label>
               <select
                 name="role"
@@ -159,8 +160,8 @@ export default function Management() {
                 onChange={handleInputChange}
                 className="w-full border px-3 py-2 rounded-md"
               >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
+                <option value="Admin">Admin</option>
+                <option value="User">User</option>
               </select>
             </div>
             <div className="flex justify-end gap-2">
