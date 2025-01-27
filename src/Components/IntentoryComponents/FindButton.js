@@ -1,14 +1,25 @@
-export default function FindBtn({ setIsOpen, handleSearch }) {
-  const handleFindClick = (e) => {
+import { getAllItems } from "../../Services/useInventoryLogic";
+
+export default function FindBtn({ setIsOpen, setFilteredData }) {
+  const handleFindClick = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const searchQuery = formData.get("search");
+    const searchQuery = formData.get("search").toLowerCase();
 
-    if (handleSearch) {
-      handleSearch(searchQuery);
+    try {
+      const allItems = await getAllItems();
+      const filteredResults = allItems.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchQuery) ||
+          item.description.toLowerCase().includes(searchQuery) ||
+          item.location.toLowerCase().includes(searchQuery)
+      );
+
+      setFilteredData(filteredResults);
+      setIsOpen(false);
+    } catch (err) {
+      console.error("Failed to search items:", err);
     }
-
-    setIsOpen(false);
   };
 
   const handleCancel = () => {

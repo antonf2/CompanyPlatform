@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const useManagementLogic = () => {
   const [users, setUsers] = useState([]);
@@ -30,14 +31,9 @@ const useManagementLogic = () => {
     fetchUsers();
   }, []);
 
-  const handleEditClick = (user) => {
-    setCurrentUser(user);
-    setIsEditing(true);
-    setIsPopupOpen(true);
-  };
-
   const handleCreateClick = () => {
     setCurrentUser({
+      id: null,
       username: "",
       password: "",
       email: "",
@@ -48,6 +44,19 @@ const useManagementLogic = () => {
     setIsPopupOpen(true);
   };
 
+  const handleEditClick = (user) => {
+    setCurrentUser({
+      id: user.id,
+      username: user.username || "",
+      password: user.password,
+      email: user.email || "",
+      role: user.role || "User",
+      isActive: user.isActive !== undefined ? user.isActive : true,
+    });
+    setIsEditing(true);
+    setIsPopupOpen(true);
+  };
+
   const handleClosePopup = () => {
     setIsPopupOpen(false);
     setCurrentUser(null);
@@ -55,61 +64,88 @@ const useManagementLogic = () => {
 
   const handleSave = async () => {
     const token = localStorage.getItem("authToken");
-  
-    if (!currentUser.username || !currentUser.password || !currentUser.role) {
-      setError("Please fill in all required fields (Username, Password, Role).");
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    if (!currentUser.username || !currentUser.email || !currentUser.role) {
+      toast.error("Please fill in all required fields (Username, Email, Role).", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return;
     }
-  
+
     try {
       if (isEditing) {
         await axios.put(
-          `https://hackeruprojectapi.azurewebsites.net/api/User/${currentUser.username}`,
-          currentUser,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          `https://hackeruprojectapi.azurewebsites.net/api/User/${currentUser.id}`,
+          JSON.stringify(currentUser),
+          headers
         );
+        setUsers(prevUsers => prevUsers.map(user => user.id === currentUser.id ? { ...user, ...currentUser } : user));
       } else {
-        await axios.post(
+        const response = await axios.post(
           "https://hackeruprojectapi.azurewebsites.net/api/User",
-          currentUser,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          JSON.stringify(currentUser),
+          headers
         );
+        setUsers(prevUsers => [...prevUsers, response.data]);
       }
       handleClosePopup();
+      toast.success(isEditing ? "User updated successfully!" : "User created successfully!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (err) {
-      setError("Failed to save user. Please try again.");
+      toast.error("Failed to save user. Please try again.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error(err);
     }
   };
-  
 
-  const handleDeleteClick = async (username) => {
+
+  const handleDeleteClick = async (id) => {
     const token = localStorage.getItem("authToken");
+    console.log(id);
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await axios.delete(
-          `https://hackeruprojectapi.azurewebsites.net/api/User/${username}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+          `https://hackeruprojectapi.azurewebsites.net/api/User/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           }
+        }
         );
-        setUsers(prev => prev.filter(user => user.username !== username));
+        setUsers(prev => prev.filter(user => user.id !== id));
+        setError(null);
       } catch (err) {
         setError("Failed to delete user. Please try again.");
         console.error(err);
       }
     }
   };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

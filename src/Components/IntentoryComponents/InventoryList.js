@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { deleteItem } from "../../Services/useInventoryLogic";
 
 const TableRow = ({ pn, quantity, description, location, handleDelete, isMobile }) => {
   if (isMobile) {
@@ -71,14 +72,14 @@ export default function InventoryList({ data, setFilteredData }) {
     setIsModalOpen(true);
   };
 
-  const handleDelete = () => {
-    if (partNumberToDelete) {
-      const updatedData = data.filter((item) => item.pn !== partNumberToDelete);
-      setFilteredData(updatedData);
-      setIsModalOpen(false);
+  const handleDelete = async (id) => {
+    try {
+      await deleteItem(id);
+      setFilteredData((prevData) => prevData.filter((item) => item.itemId !== id));
+    } catch (err) {
+      console.error("Failed to delete item:", err);
     }
   };
-
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -92,8 +93,11 @@ export default function InventoryList({ data, setFilteredData }) {
               <div>
                 {data.map((row) => (
                   <TableRow
-                    key={row.pn}
-                    {...row}
+                    key={row.itemId}
+                    pn={row.name} // Pass `name` as the value for `pn`
+                    quantity={row.quantity}
+                    description={row.description}
+                    location={row.location}
                     handleDelete={handleDeleteClick}
                     isMobile={isMobile}
                   />
@@ -138,8 +142,11 @@ export default function InventoryList({ data, setFilteredData }) {
                 <tbody className="divide-y divide-gray-200">
                   {data.map((row) => (
                     <TableRow
-                      key={row.pn}
-                      {...row}
+                      key={row.itemId}
+                      pn={row.name} // Pass `name` as the value for `pn`
+                      quantity={row.quantity}
+                      description={row.description}
+                      location={row.location}
                       handleDelete={handleDeleteClick}
                       isMobile={isMobile}
                     />
@@ -154,7 +161,9 @@ export default function InventoryList({ data, setFilteredData }) {
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-4 rounded-md shadow-lg max-w-[90%] sm:max-w-md mx-auto">
-            <p className="text-lg font-semibold text-center">Are you sure you want to delete this item?</p>
+            <p className="text-lg font-semibold text-center">
+              Are you sure you want to delete this item?
+            </p>
             <div className="flex space-x-4 mt-4 justify-center">
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded-md"

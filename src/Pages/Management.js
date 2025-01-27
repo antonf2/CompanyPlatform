@@ -47,7 +47,7 @@ export default function Management() {
                       Name
                     </th>
                     <th className="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                      Title
+                      Role
                     </th>
                     <th className="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                       Role
@@ -63,10 +63,10 @@ export default function Management() {
                         {user.username}
                       </td>
                       <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200">
-                        {user.title}
+                        {user.role}
                       </td>
                       <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200">
-                        {user.role}
+                        {user.email}
                       </td>
                       <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200 text-right">
                         <button
@@ -76,7 +76,7 @@ export default function Management() {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDeleteClick(user.username)}
+                          onClick={() => handleDeleteClick(user.id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Delete
@@ -105,27 +105,6 @@ export default function Management() {
                 value={currentUser.username}
                 onChange={handleInputChange}
                 className="w-full border px-3 py-2 rounded-md"
-                disabled={isEditing}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={currentUser.password}
-                onChange={handleInputChange}
-                className="w-full border px-3 py-2 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Title</label>
-              <input
-                type="text"
-                name="title"
-                value={currentUser.title}
-                onChange={handleInputChange}
-                className="w-full border px-3 py-2 rounded-md"
               />
             </div>
             <div className="mb-4">
@@ -139,6 +118,19 @@ export default function Management() {
                 required
               />
             </div>
+            {!isEditing && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={currentUser.password}
+                  onChange={handleInputChange}
+                  className="w-full border px-3 py-2 rounded-md"
+                  required
+                />
+              </div>
+            )}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Active</label>
               <select

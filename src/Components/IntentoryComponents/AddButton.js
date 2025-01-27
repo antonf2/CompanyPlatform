@@ -1,18 +1,34 @@
-export default function AddBtn({ setIsOpen, data, setFilteredData }) {
-  const handleAdd = (e) => {
+import { updateItem } from "../../Services/useInventoryLogic";
+
+export default function AddBtn({ setIsOpen, data, setData }) {
+  const handleAdd = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const pn = formData.get("pn");
     const quantityToAdd = parseInt(formData.get("quantity"));
 
-    const newData = data.map((item) => {
-      if (item.pn === formData.get("pn")) {
-        return { ...item, quantity: item.quantity + quantityToAdd };
-      }
-      return item;
-    });
+    const itemToUpdate = data.find((item) => item.name === pn);
+    if (!itemToUpdate) {
+      alert("Item not found!");
+      return;
+    }
 
-    setFilteredData(newData);
-    setIsOpen(false);
+    const updatedItem = {
+      ...itemToUpdate,
+      quantity: itemToUpdate.quantity + quantityToAdd,
+    };
+
+    try {
+      await updateItem(itemToUpdate.itemId, updatedItem);
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.itemId === itemToUpdate.itemId ? updatedItem : item
+        )
+      );
+      setIsOpen(false);
+    } catch (err) {
+      console.error("Failed to update item quantity:", err);
+    }
   };
 
   const handleCancel = () => {

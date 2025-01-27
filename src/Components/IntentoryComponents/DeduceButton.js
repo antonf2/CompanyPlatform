@@ -1,23 +1,40 @@
-export default function DeduceBtn({ setIsOpen, data, setFilteredData }) {
-  const handleDeduce = (e) => {
+import { updateItem } from "../../Services/useInventoryLogic";
+
+export default function DeduceBtn({ setIsOpen, data, setData }) {
+  const handleDeduce = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const partNumber = formData.get("pn");
     const quantityToDeduct = parseInt(formData.get("quantity"));
 
-    const newData = data.map((item) => {
-      if (item.pn === formData.get("pn")) {
-        if (item.quantity >= quantityToDeduct) {
-          return { ...item, quantity: item.quantity - quantityToDeduct };
-        } else {
-          alert("Not enough quantity to deduct");
-          return item;
-        }
-      }
-      return item;
-    });
+    const itemToDeduct = data.find((item) => item.name === partNumber);
 
-    setFilteredData(newData);
-    setIsOpen(false);
+    if (!itemToDeduct) {
+      alert("Item not found!");
+      return;
+    }
+
+    if (itemToDeduct.quantity < quantityToDeduct) {
+      alert("Not enough quantity to deduct!");
+      return;
+    }
+
+    const updatedItem = {
+      ...itemToDeduct,
+      quantity: itemToDeduct.quantity - quantityToDeduct,
+    };
+
+    try {
+      await updateItem(itemToDeduct.itemId, updatedItem);
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.itemId === itemToDeduct.itemId ? updatedItem : item
+        )
+      );
+      setIsOpen(false);
+    } catch (err) {
+      console.error("Failed to deduct quantity:", err);
+    }
   };
 
   const handleCancel = () => {
@@ -42,7 +59,10 @@ export default function DeduceBtn({ setIsOpen, data, setFilteredData }) {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="quantity"
+              className="block text-sm font-medium text-gray-700"
+            >
               Quantity to Deduce
             </label>
             <input
