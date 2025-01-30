@@ -1,6 +1,7 @@
 import { createItem } from "../../Services/useInventoryLogic";
+import { toast } from "react-toastify";
 
-export default function CreateBtn({ setIsOpen, setData }) {
+export default function CreateBtn({ setIsOpen, setData, setFilteredData }) {
   const handleCreate = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -15,12 +16,17 @@ export default function CreateBtn({ setIsOpen, setData }) {
     try {
       console.log("Payload being sent:", newItem);
       const createdItem = await createItem(newItem);
+
       setData((prevData) => [...prevData, createdItem]);
+      setFilteredData((prevData) => [...prevData, createdItem]);
+
       setIsOpen(false);
     } catch (err) {
       console.error("Failed to create item:", err.response?.data || err.message);
+      toast.error("Failed to create item.", { position: "top-center" });
     }
   };
+
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">

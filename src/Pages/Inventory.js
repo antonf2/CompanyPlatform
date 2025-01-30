@@ -1,6 +1,5 @@
 import CreateBtn from "../Components/IntentoryComponents/CreateButton";
 import AddBtn from "../Components/IntentoryComponents/AddButton";
-import MoveBtn from "../Components/IntentoryComponents/MoveButton";
 import DeduceBtn from "../Components/IntentoryComponents/DeduceButton";
 import FindBtn from "../Components/IntentoryComponents/FindButton";
 import { useState, useEffect } from "react";
@@ -12,7 +11,6 @@ export default function Inventory() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,31 +44,52 @@ export default function Inventory() {
         <InventoryButton
           color="bg-red-800"
           text="Create Item"
-          data={filteredData}
-          action={(props) => <CreateBtn {...props} setData={setData} />}
+          data={data}
+          action={(props) => (
+            <CreateBtn
+              {...props}
+              setData={setData}
+              setFilteredData={setFilteredData}
+            />
+          )}
           setFilteredData={setFilteredData}
         />
         <InventoryButton
           color="bg-blue-800"
           text="Add Items"
-          data={filteredData}
-          action={(props) => <AddBtn {...props} setData={setData} />}
+          data={data}
+          action={(props) => (
+            <AddBtn
+              {...props}
+              setData={setData}
+              setFilteredData={setFilteredData}
+            />
+          )}
           setFilteredData={setFilteredData}
         />
         <InventoryButton
           color="bg-orange-500"
           text="Deduce Items"
-          data={filteredData}
-          action={(props) => <DeduceBtn {...props} setData={setData} />}
+          data={data}
+          action={(props) => (
+            <DeduceBtn
+              {...props}
+              setData={setData}
+              setFilteredData={setFilteredData}
+            />
+          )}
           setFilteredData={setFilteredData}
         />
         <InventoryButton
           color="bg-sky-600"
           text="Find Item"
           data={filteredData}
-          action={null}
-          handleSearch={handleSearch}
+          action={(props) => (
+            <FindBtn {...props} setFilteredData={setFilteredData} />
+          )}
+          setFilteredData={setFilteredData}
         />
+        ;
       </div>
       <InventoryList
         data={filteredData}

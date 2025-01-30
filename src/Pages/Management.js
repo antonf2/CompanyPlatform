@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useManagementLogic from "../Services/useManagementLogic";
 
 export default function Management() {
@@ -15,7 +15,12 @@ export default function Management() {
     handleSave,
     handleDeleteClick,
     handleInputChange,
+    handleCancel,
+    isModalOpen,
+    setIsModalOpen
   } = useManagementLogic();
+
+  const [idToDelete, setIdToDelete] = useState();
 
   if (loading) {
     return <div>Loading users...</div>;
@@ -24,6 +29,11 @@ export default function Management() {
   if (error) {
     return <div className="text-red-500">{error}</div>;
   }
+
+  const handleDelete = (id) => {
+    setIdToDelete(id);
+    setIsModalOpen(true);
+  };
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto">
@@ -50,7 +60,7 @@ export default function Management() {
                       Role
                     </th>
                     <th className="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                      Role
+                      Email
                     </th>
                     <th className="px-4 py-3 border-b border-gray-200 bg-gray-50"></th>
                   </tr>
@@ -76,7 +86,7 @@ export default function Management() {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDeleteClick(user.id)}
+                          onClick={() => handleDelete(user.id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Delete
@@ -168,6 +178,29 @@ export default function Management() {
                 className="px-4 py-2 bg-blue-500 text-white rounded-md"
               >
                 Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+        {isModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-4 rounded-md shadow-lg max-w-[90%] sm:max-w-md mx-auto">
+            <p className="text-lg font-semibold text-center">
+              Are you sure you want to delete this item?
+            </p>
+            <div className="flex space-x-4 mt-4 justify-center">
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md"
+                onClick={() => handleDeleteClick(idToDelete)}
+              >
+                Delete
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-500 text-white rounded-md"
+                onClick={handleCancel}
+              >
+                Cancel
               </button>
             </div>
           </div>

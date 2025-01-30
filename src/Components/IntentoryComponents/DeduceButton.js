@@ -1,39 +1,29 @@
 import { updateItem } from "../../Services/useInventoryLogic";
+import { toast } from "react-toastify";
 
-export default function DeduceBtn({ setIsOpen, data, setData }) {
+export default function DeduceBtn({ setIsOpen, data, setData, setFilteredData }) {
   const handleDeduce = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const partNumber = formData.get("pn");
+    const pn = formData.get("pn");
     const quantityToDeduct = parseInt(formData.get("quantity"));
 
-    const itemToDeduct = data.find((item) => item.name === partNumber);
-
-    if (!itemToDeduct) {
-      alert("Item not found!");
+    const itemToDeduct = data.find((item) => item.name === pn);
+    if (!itemToDeduct || itemToDeduct.quantity < quantityToDeduct) {
+      toast.error("Invalid operation!",{ position: "top-center" });
       return;
     }
 
-    if (itemToDeduct.quantity < quantityToDeduct) {
-      alert("Not enough quantity to deduct!");
-      return;
-    }
-
-    const updatedItem = {
-      ...itemToDeduct,
-      quantity: itemToDeduct.quantity - quantityToDeduct,
-    };
+    const updatedItem = { ...itemToDeduct, quantity: itemToDeduct.quantity - quantityToDeduct };
 
     try {
       await updateItem(itemToDeduct.itemId, updatedItem);
-      setData((prevData) =>
-        prevData.map((item) =>
-          item.itemId === itemToDeduct.itemId ? updatedItem : item
-        )
-      );
+      setData((prevData) => prevData.map((item) => (item.itemId === itemToDeduct.itemId ? updatedItem : item)));
+      setFilteredData((prevData) => prevData.map((item) => (item.itemId === itemToDeduct.itemId ? updatedItem : item)));
       setIsOpen(false);
     } catch (err) {
-      console.error("Failed to deduct quantity:", err);
+      console.error("Failed to update item:", err);
+      toast.error("Failed to update item.",{ position: "top-center" });
     }
   };
 

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { deleteItem } from "../../Services/useInventoryLogic";
 
-const TableRow = ({ pn, quantity, description, location, handleDelete, isMobile }) => {
+const TableRow = ({ itemId, pn, quantity, description, location, handleDelete, isMobile }) => {
   if (isMobile) {
     return (
       <div className="bg-white rounded-md border border-gray-200 p-4 mb-4">
@@ -25,7 +25,7 @@ const TableRow = ({ pn, quantity, description, location, handleDelete, isMobile 
           <button
             type="button"
             className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 dark:text-red-500 dark:hover:text-red-400"
-            onClick={() => handleDelete(pn)}
+            onClick={() => handleDelete(itemId)}
           >
             Delete
           </button>
@@ -44,7 +44,7 @@ const TableRow = ({ pn, quantity, description, location, handleDelete, isMobile 
         <button
           type="button"
           className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 dark:text-red-500 dark:hover:text-red-400"
-          onClick={() => handleDelete(pn)}
+          onClick={() => handleDelete(itemId)}
         >
           Delete
         </button>
@@ -55,31 +55,34 @@ const TableRow = ({ pn, quantity, description, location, handleDelete, isMobile 
 
 export default function InventoryList({ data, setFilteredData }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [partNumberToDelete, setPartNumberToDelete] = useState(null);
+  const [itemIdToDelete, setItemIdToDelete] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-
-  useState(() => {
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleDeleteClick = (partNumber) => {
-    setPartNumberToDelete(partNumber);
+  const handleDeleteClick = (itemId) => {
+    setItemIdToDelete(itemId);
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
+    if (!itemIdToDelete) return;
+
     try {
-      await deleteItem(id);
-      setFilteredData((prevData) => prevData.filter((item) => item.itemId !== id));
+      await deleteItem(itemIdToDelete);
+      setFilteredData((prevData) => prevData.filter((item) => item.itemId !== itemIdToDelete));
+      setIsModalOpen(false);
     } catch (err) {
       console.error("Failed to delete item:", err);
     }
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -94,7 +97,8 @@ export default function InventoryList({ data, setFilteredData }) {
                 {data.map((row) => (
                   <TableRow
                     key={row.itemId}
-                    pn={row.name} // Pass `name` as the value for `pn`
+                    itemId={row.itemId}
+                    pn={row.name}
                     quantity={row.quantity}
                     description={row.description}
                     location={row.location}
@@ -107,43 +111,19 @@ export default function InventoryList({ data, setFilteredData }) {
               <table className="min-w-full table-auto">
                 <thead>
                   <tr className="bg-white">
-                    <th
-                      scope="col"
-                      className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase"
-                    >
-                      P/N
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase"
-                    >
-                      Quantity
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase"
-                    >
-                      Description
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase"
-                    >
-                      Location
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-2 text-end text-xs font-medium text-gray-500 uppercase"
-                    >
-                      Action
-                    </th>
+                    <th className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase">P/N</th>
+                    <th className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                    <th className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase">Description</th>
+                    <th className="px-4 py-2 text-start text-xs font-medium text-gray-500 uppercase">Location</th>
+                    <th className="px-4 py-2 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {data.map((row) => (
                     <TableRow
                       key={row.itemId}
-                      pn={row.name} // Pass `name` as the value for `pn`
+                      itemId={row.itemId}
+                      pn={row.name}
                       quantity={row.quantity}
                       description={row.description}
                       location={row.location}

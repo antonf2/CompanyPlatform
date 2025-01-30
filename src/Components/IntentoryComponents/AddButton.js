@@ -1,6 +1,7 @@
+import { toast } from "react-toastify";
 import { updateItem } from "../../Services/useInventoryLogic";
 
-export default function AddBtn({ setIsOpen, data, setData }) {
+export default function AddBtn({ setIsOpen, data, setData, setFilteredData }) {
   const handleAdd = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -9,25 +10,22 @@ export default function AddBtn({ setIsOpen, data, setData }) {
 
     const itemToUpdate = data.find((item) => item.name === pn);
     if (!itemToUpdate) {
-      alert("Item not found!");
+      toast.error("Item not found!", { position: "top-center" });
       return;
     }
 
-    const updatedItem = {
-      ...itemToUpdate,
-      quantity: itemToUpdate.quantity + quantityToAdd,
-    };
+    const updatedItem = { ...itemToUpdate, quantity: itemToUpdate.quantity + quantityToAdd };
 
     try {
       await updateItem(itemToUpdate.itemId, updatedItem);
-      setData((prevData) =>
-        prevData.map((item) =>
-          item.itemId === itemToUpdate.itemId ? updatedItem : item
-        )
-      );
+
+      setData((prevData) => prevData.map((item) => (item.itemId === itemToUpdate.itemId ? updatedItem : item)));
+      setFilteredData((prevData) => prevData.map((item) => (item.itemId === itemToUpdate.itemId ? updatedItem : item)));
+
       setIsOpen(false);
     } catch (err) {
-      console.error("Failed to update item quantity:", err);
+      console.error("Failed to update item:", err);
+      toast.error("Failed to update item.", { position: "top-center" });
     }
   };
 
