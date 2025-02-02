@@ -89,7 +89,6 @@ export default function Inventory() {
           )}
           setFilteredData={setFilteredData}
         />
-        ;
       </div>
       <InventoryList
         data={filteredData}

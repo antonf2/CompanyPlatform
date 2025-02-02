@@ -14,7 +14,6 @@ export default function CreateBtn({ setIsOpen, setData, setFilteredData }) {
     };
 
     try {
-      console.log("Payload being sent:", newItem);
       const createdItem = await createItem(newItem);
 
       setData((prevData) => [...prevData, createdItem]);
