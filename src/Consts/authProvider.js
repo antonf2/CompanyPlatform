@@ -10,6 +10,13 @@ function AuthProvider({ children }) {
   const decodeToken = (token) => {
     try {
       const decoded = jwtDecode(token);
+      const currentTime = Math.floor(Date.now() / 1000); 
+
+      if (decoded.exp < currentTime) {
+        logout();
+        return;
+      }
+
       setUser({
         username: decoded.unique_name,
         role: decoded.role,
@@ -17,8 +24,7 @@ function AuthProvider({ children }) {
       setIsAuthenticated(true);
     } catch (error) {
       console.error("Invalid token:", error);
-      setIsAuthenticated(false);
-      setUser(null);
+      logout();
     }
   };
 
@@ -27,8 +33,7 @@ function AuthProvider({ children }) {
     if (storedToken) {
       decodeToken(storedToken);
     } else {
-      setIsAuthenticated(false);
-      setUser(null);
+      logout();
     }
     setIsLoading(false);
   };
@@ -39,8 +44,7 @@ function AuthProvider({ children }) {
     const handleStorageChange = () => {
       const updatedToken = localStorage.getItem("authToken");
       if (!updatedToken) {
-        setIsAuthenticated(false);
-        setUser(null);
+        logout();
       } else {
         decodeToken(updatedToken);
       }
@@ -53,6 +57,21 @@ function AuthProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        const decoded = jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+          logout();
+        }
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const login = (token) => {
     localStorage.setItem("authToken", token);
     syncUserFromStorage();
@@ -62,6 +81,7 @@ function AuthProvider({ children }) {
     localStorage.removeItem("authToken");
     setIsAuthenticated(false);
     setUser(null);
+    window.location.href = "/login";
   };
 
   if (isLoading) {

@@ -53,19 +53,25 @@ export default function Login() {
     setLoading(false);
   };
 
+  const infoForExaminer = (
+    <div className="text-xs text-gray-500">
+      Examiner credentials: <br />Admin user - admin/admin <br/>Normal user - user/user
+    </div>
+  );
+
   return (
     <div className="flex h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-neutral-100">
       <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white px-8 pb-6 border border-gray-300 rounded-xl">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Sign in to your account
         </h2>
-
+        {infoForExaminer}
         <div className="mt-10">
           <form className="space-y-6" onSubmit={handleLogin}>
             {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
             <div>
               <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
-                Username
+                Username:
               </label>
               <div className="mt-2">
                 <input
@@ -83,7 +89,7 @@ export default function Login() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                Password
+                Password:
               </label>
               <div className="mt-2">
                 <input

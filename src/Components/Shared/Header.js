@@ -28,16 +28,7 @@ export default function Header() {
       <div className="block lg:hidden">
         <SidebarMenu />
       </div>
-      <div className="relative hidden md:block lg:ml-[240px]">
-        <HiOutlineSearch
-          fontSize={20}
-          className="text-gray-400 absolute top-1/2 -translate-y-1/2 left-3"
-        />
-        <input
-          type="text"
-          placeholder="Search..."
-          className="text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-sm px-4 pl-11"
-        />
+      <div>
       </div>
       <div className="flex items-center gap-2 mr-2">
         <PopoverItem
@@ -79,15 +70,7 @@ export default function Header() {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <MenuItems className="origin-top-right z-10 absolute right-8 mt-2 w-48 rounded-sm shadow-md p-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <MenuItem>
-                <div
-                  className="group flex items-center px-4 py-2 text-sm cursor-pointer rounded-md data-[focus]:bg-gray-100 data-[hover]:bg-gray-100"
-                  onClick={() => navigate("/profile")}
-                >
-                  My Profile
-                </div>
-              </MenuItem>
+            <MenuItems className="origin-top-right z-10 absolute right-1 mt-2 w-48 rounded-sm shadow-md p-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
               <MenuItem>
                 <div
                   className="group flex items-center px-4 py-2 text-sm cursor-pointer rounded-md data-[focus]:bg-gray-100 data-[hover]:bg-gray-100"
