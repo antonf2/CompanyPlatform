@@ -85,7 +85,7 @@ export default function Inventory() {
           text="Find Item"
           data={filteredData}
           action={(props) => (
-            <FindBtn {...props} setFilteredData={setFilteredData} />
+            <FindBtn {...props} setFilteredData={setFilteredData} data={data}/>
           )}
           setFilteredData={setFilteredData}
         />

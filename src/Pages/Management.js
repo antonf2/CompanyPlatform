@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useManagementLogic from "../Services/useManagementLogic";
 
 export default function Management() {
@@ -17,10 +17,12 @@ export default function Management() {
     handleInputChange,
     handleCancel,
     isModalOpen,
-    setIsModalOpen
+    setIsModalOpen,
   } = useManagementLogic();
 
   const [idToDelete, setIdToDelete] = useState();
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 20;
 
   if (loading) {
     return <div>Loading users...</div>;
@@ -34,6 +36,11 @@ export default function Management() {
     setIdToDelete(id);
     setIsModalOpen(true);
   };
+
+  const paginatedUsers = users.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto">
@@ -67,7 +74,7 @@ export default function Management() {
                 </thead>
 
                 <tbody className="bg-white">
-                  {users.map((user, index) => (
+                  {paginatedUsers.map((user, index) => (
                     <tr key={index}>
                       <td className="px-4 py-4 whitespace-no-wrap border-b border-gray-200">
                         {user.username}
@@ -98,6 +105,26 @@ export default function Management() {
               </table>
             </div>
           </div>
+        </div>
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+            disabled={currentPage === 0}
+            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+          >
+            &lt; Prev
+          </button>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                (prev + 1) * itemsPerPage < users.length ? prev + 1 : prev
+              )
+            }
+            disabled={(currentPage + 1) * itemsPerPage >= users.length}
+            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+          >
+            Next &gt;
+          </button>
         </div>
       </div>
 
@@ -130,7 +157,9 @@ export default function Management() {
             </div>
             {!isEditing && (
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Password</label>
+                <label className="block text-sm font-medium mb-1">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -183,7 +212,7 @@ export default function Management() {
           </div>
         </div>
       )}
-        {isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-4 rounded-md shadow-lg max-w-[90%] sm:max-w-md mx-auto">
             <p className="text-lg font-semibold text-center">

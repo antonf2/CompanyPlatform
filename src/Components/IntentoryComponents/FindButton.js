@@ -37,11 +37,13 @@ export default function FindBtn({ setIsOpen, data, setFilteredData }) {
   };
 
   const handleReset = () => {
+    console.log("Resetting filters, original data:", originalData);
     setFilteredResults(originalData); 
     setFilteredData(originalData);
     setAppliedFilters([]); 
     toast.success("Filters reset successfully!", { position: "top-center" });
   };
+  
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
