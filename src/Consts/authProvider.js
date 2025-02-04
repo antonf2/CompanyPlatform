@@ -32,8 +32,6 @@ function AuthProvider({ children }) {
     const storedToken = localStorage.getItem("authToken");
     if (storedToken) {
       decodeToken(storedToken);
-    } else {
-      logout();
     }
     setIsLoading(false);
   };
